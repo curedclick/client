@@ -36,6 +36,7 @@ export default function ContactForm() {
     formState: { errors },
   } = useForm({
     defaultValues: {
+      phoneNumber: "",
       email: user?.emailAddresses[0].emailAddress || "",
     },
   });

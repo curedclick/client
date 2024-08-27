@@ -42,6 +42,42 @@ export interface OnboardingFormData {
   fullAddress: string | undefined;
 }
 
+export interface AddressData {
+  DPA: {
+    UPRN: string;
+    UDPRN: string;
+    ADDRESS: string;
+    BUILDING_NUMBER: string;
+    THOROUGHFARE_NAME: string;
+    POST_TOWN: string;
+    POSTCODE: string;
+    RPC: string;
+    X_COORDINATE: number;
+    Y_COORDINATE: number;
+    STATUS: string;
+    LOGICAL_STATUS_CODE: string;
+    CLASSIFICATION_CODE: string;
+    CLASSIFICATION_CODE_DESCRIPTION: string;
+    LOCAL_CUSTODIAN_CODE: 9051;
+    LOCAL_CUSTODIAN_CODE_DESCRIPTION: string;
+    COUNTRY_CODE: string;
+    COUNTRY_CODE_DESCRIPTION: string;
+    POSTAL_ADDRESS_CODE: string;
+    POSTAL_ADDRESS_CODE_DESCRIPTION: string;
+    BLPU_STATE_CODE: string;
+    BLPU_STATE_CODE_DESCRIPTION: string;
+    TOPOGRAPHY_LAYER_TOID: string;
+    WARD_CODE: string;
+    LAST_UPDATE_DATE: string;
+    ENTRY_DATE: string;
+    BLPU_STATE_DATE: string;
+    LANGUAGE: string;
+    MATCH: number;
+    MATCH_DESCRIPTION: string;
+    DELIVERY_POINT_SUFFIX: string;
+  };
+}
+
 export const steps = ["My Details", "Contact Information"];
 
 export default function OnboardingForm({
@@ -59,7 +95,7 @@ export default function OnboardingForm({
     postcode: "",
     fullAddress: undefined,
   });
-  const [addressOptions, setAddressOptions] = useState<string[]>([]);
+  const [addressOptions, setAddressOptions] = useState<AddressData[]>([]);
   const [isAddressDisabled, setIsAddressDisabled] = useState(true);
 
   useEffect(() => {
@@ -256,7 +292,7 @@ export default function OnboardingForm({
                 {addressOptions.map((address, index) => (
                   <MenuItem
                     key={index}
-                    value={address?.DPA}
+                    value={JSON.stringify(address.DPA)}
                     sx={{ whiteSpace: "normal" }}
                   >
                     {address?.DPA?.ADDRESS}
