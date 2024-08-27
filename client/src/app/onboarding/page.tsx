@@ -16,7 +16,7 @@ export default function OnboardingPage() {
     <Fade in>
       <Stack component="main" spacing={5} paddingTop={5}>
         <Typography component="h1" variant="h4" textAlign="center">
-          Let's get you onboarded! Here at Kin
+          Let&apos;s get you onboarded! Here at Kin
           <span style={{ color: theme.palette.secondary.main }}>Well</span> we
           value your health.
         </Typography>
