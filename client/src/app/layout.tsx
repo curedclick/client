@@ -1,18 +1,24 @@
 "use client"; // This directive is necessary to use client-side functionality
 
-import { Montserrat, Roboto } from "next/font/google";
+import { Montserrat, Roboto, DM_Sans } from "next/font/google";
 import { ThemeProvider } from "@mui/material/styles";
 import { theme } from "./theme/theme"; // Adjust the import to your theme file
+import {
+  ClerkProvider,
+  SignedOut,
+  SignInButton,
+  SignedIn,
+  UserButton,
+} from "@clerk/nextjs";
+import ButtonAppBar from "./components/navbar";
+import "./globals.css";
+import { Container } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFnsV3";
 
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-});
+const dmSans = DM_Sans({ subsets: ["latin"] });
 
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["100", "300", "400", "500", "700", "900"],
-});
+const montserrat = Montserrat({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
@@ -20,10 +26,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${montserrat.className} ${roboto.className}`}>
-        <ThemeProvider theme={theme}>{children}</ThemeProvider>
-      </body>
-    </html>
+    <ClerkProvider
+      appearance={{
+        layout: {
+          socialButtonsPlacement: "bottom",
+          logoLinkUrl: "https://kinwellpharmacy.co.uk",
+        },
+        variables: { colorPrimary: theme.palette.primary.main },
+      }}
+    >
+      <html lang="en">
+        <body className={dmSans.className}>
+          <ThemeProvider theme={theme}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <ButtonAppBar />
+              <Container>{children}</Container>
+            </LocalizationProvider>
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
