@@ -53,7 +53,7 @@ export default function ButtonAppBar() {
 
   function handleRedirect(show: "signin" | "signup") {
     setOpen(false);
-    redirectToAuth({ show });
+    window.location.href = `/auth?show=${show}`;
   }
 
   const theme = useTheme();
