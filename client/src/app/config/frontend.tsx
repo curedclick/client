@@ -25,12 +25,11 @@ export function setRouter(
 export const frontendConfig = (): SuperTokensConfig => {
   return {
     appInfo,
-    getRedirectionURL: async (context) => {
+    getRedirectionURL: async (context, userContext) => {
       if (context.action === "SUCCESS" && context.newSessionCreated) {
         // called on a successful sign in / up. Where should the user go next?
-        const userInfo = await getUserInfoSSR();
-        console.log(userInfo);
-        if (context.createdNewUser || userInfo?.onboarded === false) {
+        console.log({ fahed: context });
+        if (context.createdNewUser || userContext?.onboarded === false) {
           return "/onboarding";
         } else {
           // user signed in
