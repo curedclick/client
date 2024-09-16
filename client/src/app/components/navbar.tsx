@@ -26,6 +26,8 @@ import {
 } from "@mui/material";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import { signOut } from "supertokens-auth-react/recipe/session";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
 
 const navItems = [
   { label: "Home", slug: "" },
@@ -35,10 +37,16 @@ const navItems = [
 
 export default function ButtonAppBar() {
   const [open, setOpen] = React.useState(false);
+  const session = useSessionContext();
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
+
+  async function onLogout() {
+    await signOut();
+    window.location.href = "/auth"; // or to wherever your logic page is
+  }
 
   const theme = useTheme();
   return (
@@ -91,6 +99,25 @@ export default function ButtonAppBar() {
                     {item.label}
                   </Button>
                 ))}
+                {session.loading === false && session.doesSessionExist ? (
+                  <Button
+                    onClick={onLogout}
+                    disableRipple
+                    sx={{ fontSize: "16px" }}
+                  >
+                    Sign Out
+                  </Button>
+                ) : (
+                  <Link href="/auth">
+                    <Button
+                      variant="contained"
+                      disableRipple
+                      sx={{ fontSize: "16px" }}
+                    >
+                      Sign In
+                    </Button>
+                  </Link>
+                )}
               </Box>
               <Box
                 sx={{
@@ -118,9 +145,9 @@ export default function ButtonAppBar() {
                         <Button onClick={toggleDrawer(false)}>
                           <CloseRoundedIcon />
                         </Button>
-                        <SignedIn>
+                        {/* <SignedIn>
                           <UserButton />
-                        </SignedIn>
+                        </SignedIn> */}
                       </Stack>
                     </Box>
                     <List>
@@ -137,7 +164,7 @@ export default function ButtonAppBar() {
                           </Link>
                         </ListItem>
                       ))}
-                      <SignedIn>
+                      {/* <SignedIn>
                         <ListItem onClick={toggleDrawer(false)}>
                           <SignOutButton>
                             <Button fullWidth variant="contained">
@@ -161,15 +188,15 @@ export default function ButtonAppBar() {
                             </Button>
                           </SignUpButton>
                         </ListItem>
-                      </SignedOut>
+                      </SignedOut> */}
                     </List>
                   </Box>
                 </Drawer>
               </Box>
               <Box sx={{ [theme.breakpoints.down("md")]: { display: "none" } }}>
-                <SignedIn>
+                {/* <SignedIn>
                   <UserButton />
-                </SignedIn>
+                </SignedIn> */}
               </Box>
             </Stack>
           </Toolbar>

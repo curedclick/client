@@ -1,4 +1,6 @@
 import { createTheme } from "@mui/material";
+import type {} from "@mui/lab/themeAugmentation";
+
 declare module "@mui/material/styles" {
   interface Palette {
     appBar: Palette["primary"];
@@ -33,13 +35,7 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           textTransform: "none",
-        },
-      },
-    },
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          backgroundColor: "white",
+          borderRadius: "100px",
         },
       },
     },
@@ -50,6 +46,13 @@ export const theme = createTheme({
         },
         listbox: {
           alignItems: "flex-start",
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "white",
         },
       },
     },

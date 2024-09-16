@@ -2,19 +2,12 @@
 import React, { useEffect } from "react";
 import {
   Grid,
-  InputAdornment,
   TextField,
   Typography,
   useTheme,
-  Autocomplete,
-  Box,
-  Stack,
   Select,
   Button,
 } from "@mui/material";
-import { DateField } from "@mui/x-date-pickers";
-import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
-import { filterOptions } from "./helpers/filterOptions";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 export type GpSurgery = {

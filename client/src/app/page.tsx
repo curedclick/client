@@ -1,5 +1,10 @@
-import { SignUp } from "@clerk/nextjs";
+"use client";
+import { SessionAuth } from "supertokens-auth-react/recipe/session";
 
 export default function Page() {
-  return <p>hello!</p>;
+  return (
+    <SessionAuth>
+      <p>hello!</p>
+    </SessionAuth>
+  );
 }

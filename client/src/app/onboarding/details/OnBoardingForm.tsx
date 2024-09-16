@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
-  Grid,
   TextField,
   Autocomplete,
   Stack,
@@ -11,12 +10,7 @@ import {
   Step,
   StepLabel,
   Fade,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormHelperText,
   Typography,
-  FormControl,
 } from "@mui/material";
 import { DateField } from "@mui/x-date-pickers";
 import { filterOptions } from "./helpers/filterOptions";
@@ -24,7 +18,9 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { format, parse } from "date-fns";
-import { getAddressFromPostcode } from "@/app/api/routes/os-places/os-places.query";
+import Grid from "@mui/material/Grid2";
+import { getUserInfo } from "@/app/api/routes/onboarding/onboarding.query";
+import { useSessionContext } from "supertokens-auth-react/recipe/session";
 
 export type GpSurgery = {
   id: number;
@@ -92,8 +88,6 @@ export default function OnboardingForm({
     lastName: "",
     dateOfBirth: null,
     gpSurgery: undefined,
-    postcode: "",
-    fullAddress: undefined,
   });
   const [addressOptions, setAddressOptions] = useState<AddressData[]>([]);
   const [isAddressDisabled, setIsAddressDisabled] = useState(true);
@@ -110,8 +104,6 @@ export default function OnboardingForm({
       lastName: data.lastName || "",
       dateOfBirth: data.dateOfBirth || null,
       gpSurgery: data.gpSurgery || undefined,
-      postcode: data.postcode || "",
-      fullAddress: data.fullAddress || undefined,
     });
 
     if (data.gpSurgery) {
@@ -137,17 +129,11 @@ export default function OnboardingForm({
     reset(storedData);
   }, [storedData, reset]);
 
-  const fetchAddressOptions = async (postcode: string) => {
-    try {
-      const data = await getAddressFromPostcode({ postcode });
-      setAddressOptions(data.results || []);
-      setIsAddressDisabled(false); // Enable the address dropdown
-    } catch (error) {
-      console.error("Failed to fetch addresses:", error);
-      setAddressOptions([]);
-      setIsAddressDisabled(true); // Disable if the fetch fails
-    }
-  };
+  const session = useSessionContext();
+
+  !session.loading && session.doesSessionExist
+    ? console.log(session.accessTokenPayload)
+    : null;
 
   const onSubmit = (data: any) => {
     if (data.dateOfBirth) {
@@ -158,10 +144,10 @@ export default function OnboardingForm({
   };
 
   return (
-    <Fade in>
+    <Fade in timeout={300}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container marginTop={5} spacing={2} marginBottom={5}>
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <Stepper activeStep={0} alternativeLabel>
               {steps.map((label) => (
                 <Step key={label}>
@@ -170,7 +156,7 @@ export default function OnboardingForm({
               ))}
             </Stepper>
           </Grid>
-          <Grid item md={6} xs={6}>
+          <Grid size={{ md: 6, xs: 6 }}>
             <TextField
               variant="outlined"
               fullWidth
@@ -179,7 +165,7 @@ export default function OnboardingForm({
               required
             />
           </Grid>
-          <Grid item md={6} xs={6}>
+          <Grid size={{ md: 6, xs: 6 }}>
             <TextField
               variant="outlined"
               fullWidth
@@ -188,7 +174,7 @@ export default function OnboardingForm({
               required
             />
           </Grid>
-          <Grid item md={6} xs={12}>
+          <Grid size={{ md: 6, xs: 12 }}>
             <Controller
               name="dateOfBirth"
               control={control}
@@ -200,15 +186,13 @@ export default function OnboardingForm({
                   clearable
                   required
                   format="dd/MM/yyyy"
-                  InputProps={{
-                    endAdornment: <CalendarTodayIcon />,
-                  }}
+                  slotProps={{ input: { endAdornment: <CalendarTodayIcon /> } }}
                   {...field}
                 />
               )}
             />
           </Grid>
-          <Grid item md={6} xs={12}>
+          <Grid size={{ md: 6, xs: 12 }}>
             <Controller
               name="gpSurgery"
               control={control}
@@ -252,76 +236,19 @@ export default function OnboardingForm({
               )}
             />
           </Grid>
-          <Grid item md={6} xs={12}>
-            <TextField
-              variant="outlined"
-              fullWidth
-              label="Post Code"
-              {...register("postcode", {
-                required: true,
-                pattern: {
-                  value:
-                    /^\s*(([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([A-Za-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9]?[A-Za-z]))))\s?[0-9][A-Za-z]{2}))\s*$/,
-                  message: "Please provide a valid UK postcode",
-                },
-                onBlur: async (e) => {
-                  const isValid = await trigger("postcode");
-                  if (isValid) {
-                    await fetchAddressOptions(e.target.value);
-                  }
-                },
-              })}
-              required
-              error={!!errors.postcode}
-              helperText={errors.postcode?.message}
-            />
-          </Grid>
-          <Grid item md={6} xs={12}>
-            <FormControl fullWidth>
-              <InputLabel id="address-label">Select your address *</InputLabel>
-              <Select
-                fullWidth
-                disabled={isAddressDisabled}
-                labelId="address-label"
-                label="Select your address *"
-                required
-                {...register("fullAddress", { required: true })}
-                sx={{ backgroundColor: "white", whiteSpace: "normal" }}
-                error={!!errors.fullAddress}
-              >
-                {addressOptions.map((address, index) => (
-                  <MenuItem
-                    key={index}
-                    value={JSON.stringify(address.DPA)}
-                    sx={{ whiteSpace: "normal" }}
-                  >
-                    {address?.DPA?.ADDRESS}
-                  </MenuItem>
-                ))}
-              </Select>
-              {errors.fullAddress ? (
-                <FormHelperText>
-                  <Typography color="error">
-                    Please select an address
-                  </Typography>
-                </FormHelperText>
-              ) : null}
-            </FormControl>
-          </Grid>
-          <Grid item md={6} xs={12}></Grid>
+          <Grid size={{ md: 6, xs: 12 }}></Grid>
           <Grid
-            item
             container
-            xs={12}
+            size={{ xs: 12 }}
             spacing={2}
             direction={{ xs: "row-reverse" }}
           >
-            <Grid item md={6} xs={12}>
+            <Grid size={{ md: 6, xs: 12 }}>
               <Button type="submit" fullWidth variant="contained">
                 Next
               </Button>
             </Grid>
-            <Grid item md={6} xs={12}>
+            <Grid size={{ md: 6, xs: 12 }}>
               <Link href="/onboarding">
                 <Button
                   fullWidth

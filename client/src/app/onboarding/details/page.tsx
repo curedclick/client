@@ -1,7 +1,10 @@
-import { getGpSurgeries } from "../../api/routes/onboarding/onboarding.query";
+import {
+  getGpSurgeries,
+  getUserInfo,
+} from "../../api/routes/onboarding/onboarding.query";
 import OnboardingForm from "./OnBoardingForm";
 
-type GpSurgery = {
+export type GpSurgery = {
   id: number;
   gpPracticeName: string;
   addressLine4: string;
