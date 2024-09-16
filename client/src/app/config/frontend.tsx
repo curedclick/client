@@ -28,11 +28,6 @@ export const frontendConfig = (): SuperTokensConfig => {
     getRedirectionURL: async (context) => {
       if (context.action === "SUCCESS" && context.newSessionCreated) {
         // called on a successful sign in / up. Where should the user go next?
-        let redirectToPath = context.redirectToPath;
-        if (redirectToPath !== undefined) {
-          // we are navigating back to where the user was before they authenticated
-          return redirectToPath;
-        }
         const userInfo = await getUserInfoSSR();
         console.log(userInfo);
         if (context.createdNewUser || userInfo?.onboarded === false) {
@@ -40,6 +35,11 @@ export const frontendConfig = (): SuperTokensConfig => {
           return "/onboarding";
         } else {
           // user signed in
+          let redirectToPath = context.redirectToPath;
+          if (redirectToPath !== undefined) {
+            // we are navigating back to where the user was before they authenticated
+            return redirectToPath;
+          }
           return "/";
         }
       }
