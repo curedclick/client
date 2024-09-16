@@ -31,7 +31,6 @@ export const frontendConfig = (): SuperTokensConfig => {
         const userInfo = await getUserInfoSSR();
         console.log(userInfo);
         if (context.createdNewUser || userInfo?.onboarded === false) {
-          context.newSessionCreated.valueOf;
           return "/onboarding";
         } else {
           // user signed in
