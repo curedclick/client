@@ -23,7 +23,13 @@ export const getUserInfo = () => {
 
 export const getUserInfoSSR = async () => {
   try {
-    return (await axiosInstance("/user/info")).data;
+    return (
+      await axiosInstance("/user/info", {
+        headers: {
+          "ngrok-skip-browser-warning": "any",
+        },
+      })
+    ).data;
   } catch (error) {
     return {};
   }
