@@ -40,7 +40,6 @@ const navItems = [
 export default function ButtonAppBar() {
   const [open, setOpen] = React.useState(false);
   const session = useSessionContext();
-  const router = useRouter();
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
