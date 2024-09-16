@@ -1,3 +1,4 @@
+"use client";
 import EmailPasswordReact from "supertokens-auth-react/recipe/emailpassword";
 import ThirdPartyReact from "supertokens-auth-react/recipe/thirdparty";
 import SessionReact, {
@@ -28,8 +29,9 @@ export const frontendConfig = (): SuperTokensConfig => {
     getRedirectionURL: async (context, userContext) => {
       if (context.action === "SUCCESS" && context.newSessionCreated) {
         // called on a successful sign in / up. Where should the user go next?
-        console.log({ fahed: context });
-        if (context.createdNewUser || userContext?.onboarded === false) {
+        const userInfo = await getUserInfoSSR();
+        console.log(userInfo);
+        if (context.createdNewUser || userInfo?.onboarded === false) {
           return "/onboarding";
         } else {
           // user signed in
