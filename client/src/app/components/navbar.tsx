@@ -28,6 +28,8 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { signOut } from "supertokens-auth-react/recipe/session";
 import { useSessionContext } from "supertokens-auth-react/recipe/session";
+import { redirectToAuth } from "supertokens-auth-react";
+import { useRouter } from "next/navigation";
 
 const navItems = [
   { label: "Home", slug: "" },
@@ -38,6 +40,7 @@ const navItems = [
 export default function ButtonAppBar() {
   const [open, setOpen] = React.useState(false);
   const session = useSessionContext();
+  const router = useRouter();
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
@@ -46,6 +49,11 @@ export default function ButtonAppBar() {
   async function onLogout() {
     await signOut();
     window.location.href = "/auth"; // or to wherever your logic page is
+  }
+
+  function handleRedirect(show: "signin" | "signup") {
+    setOpen(false);
+    redirectToAuth({ show });
   }
 
   const theme = useTheme();
@@ -145,9 +153,6 @@ export default function ButtonAppBar() {
                         <Button onClick={toggleDrawer(false)}>
                           <CloseRoundedIcon />
                         </Button>
-                        {/* <SignedIn>
-                          <UserButton />
-                        </SignedIn> */}
                       </Stack>
                     </Box>
                     <List>
@@ -164,31 +169,38 @@ export default function ButtonAppBar() {
                           </Link>
                         </ListItem>
                       ))}
-                      {/* <SignedIn>
-                        <ListItem onClick={toggleDrawer(false)}>
-                          <SignOutButton>
-                            <Button fullWidth variant="contained">
-                              Sign Out
-                            </Button>
-                          </SignOutButton>
-                        </ListItem>
-                      </SignedIn>
-                      <SignedOut>
-                        <ListItem onClick={toggleDrawer(false)}>
-                          <SignInButton>
-                            <Button fullWidth variant="contained">
-                              Sign In
-                            </Button>
-                          </SignInButton>
-                        </ListItem>
-                        <ListItem onClick={toggleDrawer(false)}>
-                          <SignUpButton>
-                            <Button fullWidth variant="outlined">
-                              Sign Up
-                            </Button>
-                          </SignUpButton>
-                        </ListItem>
-                      </SignedOut> */}
+                      {session.loading === false && session.doesSessionExist ? (
+                        <Button
+                          onClick={onLogout}
+                          disableRipple
+                          sx={{ fontSize: "16px" }}
+                          fullWidth
+                          variant="contained"
+                        >
+                          Sign Out
+                        </Button>
+                      ) : (
+                        <Stack spacing={2}>
+                          <Button
+                            variant="contained"
+                            fullWidth
+                            disableRipple
+                            sx={{ fontSize: "16px" }}
+                            onClick={() => handleRedirect("signin")}
+                          >
+                            Sign In
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            fullWidth
+                            disableRipple
+                            sx={{ fontSize: "16px" }}
+                            onClick={(e) => handleRedirect("signup")}
+                          >
+                            Sign Up
+                          </Button>
+                        </Stack>
+                      )}
                     </List>
                   </Box>
                 </Drawer>
