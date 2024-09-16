@@ -41,9 +41,12 @@ export const theme = createTheme({
     MuiAutocomplete: {
       styleOverrides: {
         option: {
-          alignItems: "flex-start",
+          alignItems: "flex-start!important",
         },
         listbox: {
+          alignItems: "flex-start",
+        },
+        focused: {
           alignItems: "flex-start",
         },
       },

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import {
   TextField,
@@ -93,6 +93,7 @@ export default function ContactForm() {
   const [addressOptions, setAddressOptions] = useState<AddressData[]>([]);
   const [isAddressDisabled, setIsAddressDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const router = useRouter();
 
@@ -103,6 +104,7 @@ export default function ContactForm() {
       setAddressOptions(data.results || []);
       setLoading(false);
       setIsAddressDisabled(false); // Enable the address dropdown
+      setOpen(true);
     } catch (error) {
       console.error("Failed to fetch addresses:", error);
       setAddressOptions([]);
@@ -178,8 +180,15 @@ export default function ContactForm() {
                 label="Select your address *"
                 required
                 {...register("fullAddress", { required: true })}
-                sx={{ backgroundColor: "white", whiteSpace: "normal" }}
+                sx={{
+                  backgroundColor: "white",
+                  whiteSpace: "normal!important",
+                  "& .MuiSelect-select": { whiteSpace: "normal!important" },
+                }}
                 error={!!errors.fullAddress}
+                open={open}
+                onOpen={() => setOpen(true)}
+                onClose={() => setOpen(false)}
               >
                 {addressOptions.map((address, index) => (
                   <MenuItem
